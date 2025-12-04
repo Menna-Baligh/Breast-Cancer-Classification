@@ -1,0 +1,66 @@
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv('cleaned_data.csv')
+
+df.info(verbose=True)
+
+X = df.drop(columns='diagnosis',axis=1)
+Y = df['diagnosis']
+
+print(X)
+
+print(Y)
+
+from sklearn.model_selection import train_test_split
+X_train , X_test , Y_train , Y_test = train_test_split(X,Y,test_size=0.2,random_state=2)
+
+print(X.shape , X_train.shape , X_test.shape)
+
+"""Model Training
+
+Logistic Regression
+"""
+
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()
+
+# training the logistic reg model
+model.fit(X_train,Y_train)
+
+"""Model Evaluation
+
+Accuracy Score
+"""
+
+from sklearn.metrics import accuracy_score
+
+#  accuracy on training data
+X_train_prediction = model.predict(X_train)
+training_data_accuracy = accuracy_score(Y_train,X_train_prediction)
+
+print('Accuracy on training data = ',training_data_accuracy)
+
+#  accuracy on ttest data
+X_test_prediction = model.predict(X_test)
+test_data_accuracy = accuracy_score(Y_test,X_test_prediction)
+
+print('Accuracy on test data = ',test_data_accuracy)
+
+"""Building a Predictive System"""
+
+input_data = (12.05,14.63,78.04,449.3,0.1031,0.09092,0.06592,0.02749,0.1675,0.06043,0.2636,0.7294,1.848,19.87,0.005488,0.01427,0.02322,0.00566,0.01428,0.002422,13.76,20.7,89.88,582.6,0.1494,0.2156,0.305,0.06548,0.2747,0.08301)
+
+# change the input data to a numpy array
+input_data_as_numpy_array = np.asarray(input_data)
+#reshape the numpy array as we are predicting for the datapoint
+input_data_reshaped = input_data_as_numpy_array.reshape(1,-1)
+
+prediction = model.predict(input_data_reshaped)
+print(prediction)
+
+if(prediction[0] == 1):
+    print('The Breast Cancer is Malignant')
+else:
+    print('The Breast Cancer is Benign')
